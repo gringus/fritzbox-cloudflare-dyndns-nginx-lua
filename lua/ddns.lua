@@ -91,17 +91,14 @@ if isempty(args.ipv4) and isempty(args.ipv6) then
 end
 
 local ipv6 = ip6addr:new(args.ipv6)
-if not isempty(args.ipv6) and not ipv6 then
-    ngx.status = ngx.HTTP_BAD_REQUEST
-    error("invalid 'ipv6' address")
-    ngx.exit(ngx.HTTP_OK)
+if not isempty(args.ipv6) and not ipv6.addr then
+    error(string.format("invalid 'ipv6' address: %s", args.ipv6))
 end
 
 local ipv6offset = ip6addr:new(args.ipv6offset)
-if not isempty(args.ipv6offset) and not ipv6offset then
-    ngx.status = ngx.HTTP_BAD_REQUEST
-    error("invalid 'ipv6offset' value")
-    ngx.exit(ngx.HTTP_OK)
+if args.ipv6offset ~= nil and not ipv6offset.addr then
+    error(string.format("invalid 'ipv6offset' value: %s", args.ipv6offset))
+    ipv6.addr = nil
 end
 
 -- Find longest matching zone
@@ -153,7 +150,7 @@ for i, record in ipairs(records) do
     end
 end
 
-if ipv6offset.addr then
+if ipv6.addr and ipv6offset.addr then
     ipv6 = ipv6 + ipv6offset
 end
 
