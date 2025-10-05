@@ -1,3 +1,4 @@
+local http = require "resty.http"
 local ip6addr = require "/etc/nginx/lua/ip6addr"
 local json = require "cjson"
 local string = require "string"
@@ -37,7 +38,7 @@ end
 -- Fetch from Cloudflare
 local function cf_api(path, data)
     local api_url = "https://api.cloudflare.com/client/v4/"
-    local httpc = require("resty.http").new()
+    local httpc = http.new()
     local res, err = httpc:request_uri(api_url .. path, {
         method = (data == nil) and "GET" or "PUT",
 	body = data,
